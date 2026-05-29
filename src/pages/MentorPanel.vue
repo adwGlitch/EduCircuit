@@ -42,6 +42,16 @@
             </span>
           </div>
 
+          <!-- Student Project Links -->
+          <div v-if="sub.codeUrl || sub.demoUrl" style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;">
+            <a v-if="sub.codeUrl" :href="sub.codeUrl" target="_blank" class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 10px;">
+              💻 View Code →
+            </a>
+            <a v-if="sub.demoUrl" :href="sub.demoUrl" target="_blank" class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 10px;">
+              🎥 View Demo →
+            </a>
+          </div>
+
           <!-- Existing feedback -->
           <div v-if="sub.feedback" style="margin-top:16px;padding:12px 16px;background:var(--slate-50);border-radius:10px;border-left:3px solid var(--slate-300);">
             <div style="font-size:12px;font-weight:600;color:var(--slate-500);margin-bottom:4px;">Your Feedback:</div>
@@ -53,8 +63,8 @@
             <div v-if="activeFeedback === sub.id">
               <textarea v-model="feedbackText" rows="3" placeholder="Write your feedback for the student..." style="margin-bottom:12px;"></textarea>
               <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                <button @click="approve(sub.id)" class="btn btn-sm" style="background:#10b981;color:white;">✓ Approve</button>
-                <button @click="requestRevision(sub.id)" class="btn btn-sm" style="background:var(--yellow);color:white;">🔄 Request Revision</button>
+                <button @click="approve(sub.id)" class="btn btn-sm btn-primary">✓ Approve</button>
+                <button @click="requestRevision(sub.id)" class="btn btn-sm btn-ghost">🔄 Request Revision</button>
                 <button @click="activeFeedback=null;feedbackText=''" class="btn btn-ghost btn-sm">Cancel</button>
               </div>
             </div>

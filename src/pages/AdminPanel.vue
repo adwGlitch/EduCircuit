@@ -3,7 +3,7 @@
     <Navbar />
 
     <!-- Tab bar -->
-    <div style="background:white;border-bottom:1px solid var(--slate-200);padding:0 32px;display:flex;gap:0;">
+    <div style="background:var(--slate-50);border-bottom:1px solid var(--slate-200);padding:0 32px;display:flex;gap:0;">
       <button v-for="tab in tabs" :key="tab.id" @click="activeTab = tab.id"
         :style="`padding:14px 20px;border:none;background:transparent;font-size:14px;font-weight:600;cursor:pointer;
         border-bottom:2px solid ${activeTab===tab.id?'var(--primary)':'transparent'};
@@ -27,7 +27,7 @@
             <div style="font-size:24px;margin-bottom:6px;">{{ s.icon }}</div>
             <div style="font-size:28px;font-weight:900;color:var(--slate-900);">{{ s.value }}</div>
             <div style="font-size:12px;color:var(--slate-500);font-weight:500;margin-top:2px;">{{ s.label }}</div>
-            <div v-if="s.change" :style="`font-size:12px;font-weight:600;margin-top:6px;color:${s.change>0?'var(--green)':'var(--red)'}`">{{ s.change>0?'↑':'↓' }} {{ Math.abs(s.change) }}% this week</div>
+            <div v-if="s.change" style="font-size:11px;font-weight:700;margin-top:6px;color:var(--slate-500);">{{ s.change>0?'↑':'↓' }} {{ Math.abs(s.change) }}% this week</div>
           </div>
         </div>
         <div class="grid-2" style="margin-bottom:32px;">
@@ -59,7 +59,7 @@
         <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">Cohort Management</h2>
         <div class="card" style="overflow:hidden;">
           <table class="data-table">
-            <thead><tr><th>Student</th><th>Progress</th><th>Quiz Avg</th><th>Submissions</th><th>Status</th></tr></thead>
+            <thead><tr><th>Student</th><th>Progress</th><th>Quiz Avg</th><th>Submissions</th></tr></thead>
             <tbody>
               <tr v-for="s in store.students" :key="s.id">
                 <td>
@@ -76,7 +76,6 @@
                 </td>
                 <td><span style="font-weight:700;" :style="`color:${s.score>=90?'var(--green)':s.score>=70?'var(--primary-dark)':'var(--red)'}`">{{ s.score }}%</span></td>
                 <td style="font-size:14px;">{{ s.submissions }}/14</td>
-                <td><span :class="['badge', s.status==='completed'?'badge-green':'badge-blue']" style="font-size:12px;">{{ s.status }}</span></td>
               </tr>
             </tbody>
           </table>
@@ -90,14 +89,14 @@
     <div v-if="activeTab === 'curriculum'" style="display:flex;height:calc(100vh - 109px);overflow:hidden;">
 
       <!-- Left: Day list sidebar -->
-      <div style="width:220px;flex-shrink:0;border-right:1px solid var(--slate-200);background:white;overflow-y:auto;padding:12px 8px;">
+      <div style="width:220px;flex-shrink:0;border-right:1px solid var(--slate-200);background:var(--slate-50);overflow-y:auto;padding:12px 8px;">
         <div style="padding:8px 12px;font-size:11px;font-weight:700;color:var(--slate-400);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;">All 14 Days</div>
         <button v-for="lesson in store.lessons" :key="lesson.day"
           @click="selectDay(lesson.day)"
-          :style="`width:100%;text-align:left;padding:9px 12px;border-radius:9px;border:none;cursor:pointer;margin-bottom:2px;font-size:13px;font-weight:500;
-          background:${editingDay===lesson.day?'var(--primary-light)':'transparent'};
-          color:${editingDay===lesson.day?'var(--primary-dark)':'var(--slate-600)'};
-          display:flex;align-items:center;gap:8px;`">
+          :style="`width:100%;text-align:left;padding:9px 12px;border-radius:var(--radius);border:none;cursor:pointer;margin-bottom:2px;font-size:13px;font-weight:600;
+          background:${editingDay===lesson.day?'var(--slate-900)':'transparent'};
+          color:${editingDay===lesson.day?'var(--slate-50)':'var(--slate-600)'};
+          display:flex;align-items:center;gap:8px;transition:all 0.15s;`">
           <span style="font-size:11px;font-weight:700;opacity:0.6;">D{{ lesson.day }}</span>
           <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">{{ lesson.title }}</span>
           <span style="font-size:9px;" :style="`color:${lesson.status==='done'?'var(--green)':lesson.status==='active'?'var(--primary)':'var(--slate-300)'}`">●</span>
@@ -168,7 +167,7 @@
             <div style="font-size:12px;font-weight:600;color:var(--slate-500);margin-bottom:8px;">Preview:</div>
             <div style="border-radius:12px;overflow:hidden;aspect-ratio:16/9;background:var(--slate-900);" v-html="draft.videoEmbed"></div>
           </div>
-          <div v-else-if="draft.videoUrl" style="margin-top:12px;padding:12px 16px;background:var(--primary-light);border-radius:10px;font-size:13px;color:#0369a1;">
+          <div v-else-if="draft.videoUrl" style="margin-top:12px;padding:12px 16px;background:var(--slate-100);border-radius:10px;font-size:13px;color:var(--slate-800);border:1px solid var(--slate-200);">
             ✓ Video URL saved — embed code will be shown to students.
           </div>
         </div>
@@ -202,8 +201,14 @@
 
         <!-- ── SECTION 4: Quiz Questions ── -->
         <div class="card" style="padding:24px;margin-bottom:20px;" v-if="draft">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-            <h3 style="font-size:14px;font-weight:700;color:var(--slate-500);text-transform:uppercase;letter-spacing:0.06em;">❓ Quiz Questions</h3>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+            <div style="display:flex;align-items:center;gap:16px;">
+              <h3 style="font-size:14px;font-weight:700;color:var(--slate-500);text-transform:uppercase;letter-spacing:0.06em;">❓ Quiz Questions</h3>
+              <div style="display:flex;align-items:center;gap:8px;background:var(--slate-100);padding:6px 12px;border-radius:8px;border:1px solid var(--slate-200);">
+                <span style="font-size:12px;font-weight:600;color:var(--slate-600);">Total Questions:</span>
+                <input type="number" :value="(draft.quizQuestions || []).length" @change="updateQuizCount($event.target.value)" min="0" max="20" style="width:60px;padding:4px;border-radius:4px;border:1px solid var(--slate-300);text-align:center;font-weight:700;font-size:14px;" />
+              </div>
+            </div>
             <button @click="addQuestion" class="btn btn-ghost btn-sm">+ Add Question</button>
           </div>
 
@@ -278,16 +283,15 @@ const activeTab = ref('overview')
 // ── Overview computed ─────────────────────────────────────────────────────────
 const adminStats = computed(() => [
   { icon: '👥', value: store.students.length, label: 'Total Students', change: 12 },
-  { icon: '✅', value: store.students.filter(s => s.status === 'completed').length, label: 'Completed', change: 0 },
   { icon: '📈', value: Math.round(store.students.reduce((a, b) => a + b.progress, 0) / store.students.length) + '%', label: 'Avg Progress', change: 8 },
   { icon: '⭐', value: Math.round(store.students.reduce((a, b) => a + b.score, 0) / store.students.length) + '%', label: 'Avg Quiz Score', change: 3 },
 ])
 const topStudents = computed(() => [...store.students].sort((a, b) => b.score - a.score).slice(0, 5))
 const progressBuckets = [
-  { label: '0–25% — Just Starting', count: 1, color: '#94a3b8' },
-  { label: '26–50% — Early Progress', count: 2, color: '#38bdf8' },
-  { label: '51–75% — Midway Through', count: 2, color: '#0ea5e9' },
-  { label: '76–100% — Almost Done', count: 1, color: '#10b981' },
+  { label: '0–25% — Just Starting', count: 1, color: 'var(--slate-300)' },
+  { label: '26–50% — Early Progress', count: 2, color: 'var(--slate-500)' },
+  { label: '51–75% — Midway Through', count: 2, color: 'var(--slate-700)' },
+  { label: '76–100% — Almost Done', count: 1, color: 'var(--slate-900)' },
 ]
 
 // ── Curriculum Editor ─────────────────────────────────────────────────────────
@@ -325,6 +329,9 @@ function discardChanges() {
 }
 
 function addQuestion() {
+  if (!draft.value.quizQuestions) {
+    draft.value.quizQuestions = []
+  }
   draft.value.quizQuestions.push({
     q: '',
     options: ['', '', '', ''],
@@ -332,7 +339,23 @@ function addQuestion() {
   })
 }
 
+function updateQuizCount(count) {
+  const target = parseInt(count, 10) || 0;
+  if (!draft.value.quizQuestions) draft.value.quizQuestions = [];
+  
+  if (target > draft.value.quizQuestions.length) {
+    const diff = target - draft.value.quizQuestions.length;
+    for (let i = 0; i < diff; i++) {
+      addQuestion();
+    }
+  } else if (target < draft.value.quizQuestions.length && target >= 0) {
+    draft.value.quizQuestions.splice(target);
+  }
+}
+
 function removeQuestion(idx) {
-  draft.value.quizQuestions.splice(idx, 1)
+  if (draft.value.quizQuestions) {
+    draft.value.quizQuestions.splice(idx, 1)
+  }
 }
 </script>

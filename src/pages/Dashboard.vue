@@ -4,7 +4,7 @@
     <div class="page-header">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
         <div>
-          <h1 class="page-title">Welcome back, {{ store.currentUser.name.split(' ')[0] }} 👋</h1>
+          <h1 class="page-title">Welcome back, {{ store.currentUser?.name?.split(' ')[0] || 'User' }} 👋</h1>
           <p class="page-sub">{{ today }} · {{ store.completedDays }}/14 days complete</p>
         </div>
         <router-link :to="nextLesson ? `/lesson/${nextLesson.day}` : '/lesson/5'" class="btn btn-primary">
@@ -13,10 +13,10 @@
       </div>
 
       <!-- Progress bar -->
-      <div style="margin-top:20px;background:var(--slate-100);border-radius:999px;height:8px;">
+      <div style="margin-top:20px;background:var(--slate-200);border-radius:999px;height:8px;">
         <div style="height:8px;border-radius:999px;background:var(--primary);transition:width 0.6s ease;" :style="`width:${store.progressPercent}%`"></div>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--slate-400);">
+      <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--slate-500);">
         <span>{{ store.progressPercent }}% complete</span>
         <span>{{ 14 - store.completedDays }} days remaining</span>
       </div>
@@ -25,10 +25,13 @@
     <div class="page-body">
       <!-- Stat cards -->
       <div class="grid-4" style="margin-bottom:32px;">
-        <div class="card" style="padding:20px;" v-for="s in statCards" :key="s.label">
+        <div class="card" style="padding:20px; transition: all 0.15s;" :style="s.label === 'Certificate' && store.progressPercent >= 75 ? 'cursor:pointer; border-color:var(--primary);' : ''" v-for="s in statCards" :key="s.label" @click="s.label === 'Certificate' && store.progressPercent >= 75 && $router.push('/certificate')">
           <div style="font-size:22px;margin-bottom:4px;">{{ s.icon }}</div>
           <div style="font-size:24px;font-weight:800;color:var(--slate-900);">{{ s.value }}</div>
-          <div style="font-size:12px;color:var(--slate-500);font-weight:500;">{{ s.label }}</div>
+          <div style="font-size:12px;color:var(--slate-500);font-weight:500;display:flex;justify-content:space-between;align-items:center;">
+            <span>{{ s.label }}</span>
+            <span v-if="s.label === 'Certificate' && store.progressPercent >= 75" style="font-size:10px;text-decoration:underline;">Claim →</span>
+          </div>
         </div>
       </div>
 
@@ -79,6 +82,6 @@ const statCards = computed(() => [
   { icon: '📅', value: `${store.completedDays}/14`, label: 'Days Completed' },
   { icon: '🎯', value: `${store.progressPercent}%`, label: 'Overall Progress' },
   { icon: '📊', value: `${store.avgScore}%`, label: 'Quiz Average' },
-  { icon: '🏆', value: store.completedDays >= 14 ? 'Earned!' : 'In Progress', label: 'Certificate' },
+  { icon: '🏆', value: store.progressPercent >= 75 ? 'Claim Now!' : 'In Progress', label: 'Certificate' },
 ])
 </script>

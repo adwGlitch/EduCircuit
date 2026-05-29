@@ -2,14 +2,35 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useCircuitronStore = defineStore('circuitron', () => {
-  // ── State ──────────────────────────────────────────────────────────────────
-  const activeRole = ref('student') // 'student' | 'mentor' | 'admin'
+  // ── State & Mock Credentials Database ──────────────────────────────────────
+  const isLoggedIn = ref(false)
+  const loggedUser = ref(null)
+  const currentRole = ref(null)
 
-  const currentUser = computed(() => ({
-    student: { name: 'Alex Mercer', email: 'alex@circuitron.io', avatar: 'AM', joined: 'May 2026' },
-    mentor: { name: 'Dr. Sarah Kim', email: 'sarah@circuitron.io', avatar: 'SK', joined: 'Jan 2026' },
-    admin: { name: 'Admin User', email: 'admin@circuitron.io', avatar: 'AU', joined: 'Jan 2026' },
-  }[activeRole.value]))
+  const _activeRole = ref('student')
+  const activeRole = computed({
+    get: () => currentRole.value || _activeRole.value,
+    set: (val) => {
+      _activeRole.value = val
+      currentRole.value = val
+    }
+  })
+
+  const currentUser = computed(() => {
+    if (!isLoggedIn.value) return null
+    return loggedUser.value
+  })
+
+  const usersDb = [
+    { email: 'admin@circuitron.io', password: 'admin123', name: 'Admin User', role: 'admin', avatar: 'AU', joined: 'Jan 2026' },
+    { email: 'mentor@circuitron.io', password: 'mentor123', name: 'Dr. Sarah Kim', role: 'mentor', avatar: 'SK', joined: 'Jan 2026' },
+    { email: 'alex@example.com', password: 'alex123', name: 'Alex Mercer', role: 'student', avatar: 'AM', joined: 'May 2026', progress: 30, score: 87, submissions: 3 },
+    { email: 'sam@example.com', password: 'sam123', name: 'Samantha Chen', role: 'student', avatar: 'SC', joined: 'May 2026', progress: 60, score: 91, submissions: 6 },
+    { email: 'marcus@example.com', password: 'marcus123', name: 'Marcus Johnson', role: 'student', avatar: 'MJ', joined: 'Jan 2026', progress: 100, score: 94, submissions: 14 },
+    { email: 'priya@example.com', password: 'priya123', name: 'Priya Patel', role: 'student', avatar: 'PP', joined: 'Feb 2026', progress: 45, score: 78, submissions: 4 },
+    { email: 'james@example.com', password: 'james123', name: 'James Lee', role: 'student', avatar: 'JL', joined: 'Apr 2026', progress: 15, score: 80, submissions: 1 },
+    { email: 'fatima@example.com', password: 'fatima123', name: 'Fatima Al-Rashid', role: 'student', avatar: 'FA', joined: 'Mar 2026', progress: 80, score: 96, submissions: 10 },
+  ]
 
   // ── Curriculum ─────────────────────────────────────────────────────────────
   const lessons = ref([
@@ -24,7 +45,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '25 min',
       objectives: 'Understand basic electronic components, build your first LED circuit, and learn lab safety rules.',
-      components: 'Arduino Uno, Breadboard, 220Ω Resistors (×5), LEDs (×5), USB Cable, Jumper Wires',
+      components: 'Web Browser & Online Simulator (Wokwi or Tinkercad)',
       notes: 'Always check resistor values before connecting to a circuit. LEDs have polarity — the longer leg is the anode (+).',
       codeUrl: '',
       schematicUrl: '',
@@ -45,7 +66,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '30 min',
       objectives: 'Read digital inputs from push buttons, implement software debouncing, and build a multi-LED state machine.',
-      components: 'Arduino Uno, Breadboard, Push Buttons (×3), LEDs (×3), 10kΩ Resistors, 220Ω Resistors, Jumper Wires',
+      components: 'Web Browser & Online Simulator (Wokwi or Tinkercad)',
       notes: 'Mechanical buttons produce electrical noise when pressed. Use millis()-based debouncing for reliable reads.',
       codeUrl: '',
       schematicUrl: '',
@@ -65,7 +86,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '28 min',
       objectives: 'Use the Arduino ADC to read analog sensors, map values to output ranges, and visualize data over serial.',
-      components: 'Arduino Uno, LDR (Photoresistor), 10kΩ Resistor, Potentiometer, LED, Breadboard, Jumper Wires',
+      components: 'Web Browser & Online Simulator (Wokwi or Tinkercad)',
       notes: 'The Arduino Uno has a 10-bit ADC (0–1023). Use the map() function to scale sensor readings to desired ranges.',
       codeUrl: '',
       schematicUrl: '',
@@ -85,7 +106,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '35 min',
       objectives: 'Understand PWM signals, control motor speed and direction using L298N driver, build a temperature-triggered fan.',
-      components: 'Arduino Uno, L298N H-Bridge Module, DC Motor, 9V Battery + Connector, Breadboard, Jumper Wires',
+      components: 'Web Browser & Online Simulator (Wokwi or Tinkercad)',
       notes: 'Never connect a motor directly to Arduino pins — always use a driver IC. Motors can draw 200–600mA which exceeds Arduino pin limits.',
       codeUrl: '',
       schematicUrl: '',
@@ -105,7 +126,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '32 min',
       objectives: 'Learn the I2C protocol, wire a 128x64 OLED display, and show live sensor data with custom graphics.',
-      components: 'Arduino Uno, SSD1306 OLED (128x64, I2C), DHT11 Sensor, 4.7kΩ Resistors (×2), Breadboard, Jumper Wires',
+      components: 'Web Browser & Online Simulator (Wokwi or Tinkercad)',
       notes: 'I2C requires pull-up resistors on SDA and SCL lines. Default OLED I2C address is 0x3C — use I2C scanner sketch to confirm.',
       codeUrl: '',
       schematicUrl: '',
@@ -125,7 +146,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '30 min',
       objectives: 'Set up the ESP32 in Arduino IDE, connect to WiFi, perform HTTP GET requests, and parse JSON responses.',
-      components: 'ESP32 Dev Board, USB-C Cable, Breadboard, Jumper Wires',
+      components: 'Web Browser & Online Simulator (Wokwi)',
       notes: 'ESP32 operates at 3.3V logic — do not connect 5V signals directly. Use the Arduino ESP32 core package v2.x for best compatibility.',
       codeUrl: '',
       schematicUrl: '',
@@ -145,7 +166,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '40 min',
       objectives: 'Host a full HTML/CSS web page on ESP32, create REST endpoints, and toggle a relay from a browser UI.',
-      components: 'ESP32 Dev Board, 5V Relay Module, LED, 220Ω Resistor, Breadboard, Jumper Wires',
+      components: 'Web Browser & Online Simulator (Wokwi)',
       notes: 'Use ESPAsyncWebServer library for non-blocking HTTP handling. Store HTML in PROGMEM or SPIFFS for large pages.',
       codeUrl: '',
       schematicUrl: '',
@@ -164,7 +185,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '38 min',
       objectives: 'Understand the MQTT publish-subscribe model, connect to Adafruit IO broker, and stream sensor data to a live dashboard.',
-      components: 'ESP32 Dev Board, DHT22 Temperature+Humidity Sensor, Breadboard, Jumper Wires',
+      components: 'Web Browser & Online Simulator (Wokwi)',
       notes: 'Create a free Adafruit IO account before this lesson. MQTT uses port 1883 (unencrypted) or 8883 (TLS). Keep your API key secret.',
       codeUrl: '',
       schematicUrl: '',
@@ -184,7 +205,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '60 min',
       objectives: 'Integrate all ESP32 skills into a single deployable smart home sensor node with cloud reporting and automation triggers.',
-      components: 'ESP32 Dev Board, DHT22 Sensor, 5V Relay Module, Status LED, Breadboard, Jumper Wires, Power Supply',
+      components: 'Web Browser & Online Simulator (Wokwi)',
       notes: 'This is your first graded capstone project. Focus on code clarity and stable WiFi reconnection logic. Document your circuit well.',
       codeUrl: '',
       schematicUrl: '',
@@ -279,7 +300,7 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       videoEmbed: '',
       duration: '90 min',
       objectives: 'Deliver a complete hardware+software system integrating all 14 days of learning, reviewed and approved by a mentor.',
-      components: 'All components from previous days',
+      components: 'Wokwi Simulation + KiCad files',
       notes: 'Your final submission must include: working firmware, MQTT dashboard screenshot, PCB layout file, and a 2-minute demo video.',
       codeUrl: '',
       schematicUrl: '',
@@ -314,11 +335,11 @@ export const useCircuitronStore = defineStore('circuitron', () => {
 
   // ── Submissions ────────────────────────────────────────────────────────────
   const submissions = ref([
-    { id: 1, student: 'Alex Mercer', avatar: 'AM', day: 4, title: 'PWM Motor Speed Controller', type: 'Code + Video', submitted: '2h ago', status: 'pending', feedback: '' },
-    { id: 2, student: 'Samantha Chen', avatar: 'SC', day: 5, title: 'OLED Sensor Dashboard', type: 'Code + Photo', submitted: '5h ago', status: 'pending', feedback: '' },
-    { id: 3, student: 'Priya Patel', avatar: 'PP', day: 3, title: 'LDR Auto-Dimmer Circuit', type: 'Photo + Schematic', submitted: '1d ago', status: 'approved', feedback: 'Great work! Clean schematic, excellent wiring.' },
-    { id: 4, student: 'James Lee', avatar: 'JL', day: 1, title: 'First LED Blink', type: 'Video', submitted: '2d ago', status: 'revision', feedback: 'Good start! Please add a 220Ω resistor to protect the LED.' },
-    { id: 5, student: 'Fatima Al-Rashid', avatar: 'FA', day: 6, title: 'ESP32 WiFi Connection Demo', type: 'Code + Serial Monitor', submitted: '3h ago', status: 'pending', feedback: '' },
+    { id: 1, student: 'Alex Mercer', avatar: 'AM', day: 4, title: 'PWM Motor Speed Controller', type: 'Code + Video', submitted: '2h ago', status: 'pending', feedback: '', codeUrl: 'https://github.com/alexmercer/day4-pwm', demoUrl: 'https://youtube.com/watch?v=demo-alex-day4' },
+    { id: 2, student: 'Samantha Chen', avatar: 'SC', day: 5, title: 'OLED Sensor Dashboard', type: 'Code + Photo', submitted: '5h ago', status: 'pending', feedback: '', codeUrl: 'https://github.com/samchen/day5-oled', demoUrl: 'https://drive.google.com/file/d/sam5-photo' },
+    { id: 3, student: 'Priya Patel', avatar: 'PP', day: 3, title: 'LDR Auto-Dimmer Circuit', type: 'Photo + Schematic', submitted: '1d ago', status: 'approved', feedback: 'Great work! Clean schematic, excellent wiring.', codeUrl: 'https://github.com/priyapatel/day3-ldr', demoUrl: 'https://drive.google.com/file/d/priya3-schematic' },
+    { id: 4, student: 'James Lee', avatar: 'JL', day: 1, title: 'First LED Blink', type: 'Video', submitted: '2d ago', status: 'revision', feedback: 'Good start! Please add a 220Ω resistor to protect the LED.', codeUrl: '', demoUrl: 'https://youtube.com/watch?v=james-day1' },
+    { id: 5, student: 'Fatima Al-Rashid', avatar: 'FA', day: 6, title: 'ESP32 WiFi Connection Demo', type: 'Code + Serial Monitor', submitted: '3h ago', status: 'pending', feedback: '', codeUrl: 'https://github.com/fatima-ar/day6-wifi', demoUrl: '' },
   ])
 
   function approveSubmission(id, feedback) {
@@ -337,11 +358,49 @@ export const useCircuitronStore = defineStore('circuitron', () => {
       : [{ q: `Sample question for Day ${day}`, options: ['Option A', 'Option B', 'Option C', 'Option D'], answer: 0 }]
   }
 
+  function syncStudentLessons(student) {
+    const totalLessons = lessons.value.length
+    const completedCount = Math.round((student.progress / 100) * totalLessons)
+    lessons.value.forEach((l, idx) => {
+      if (idx < completedCount) {
+        l.status = 'done'
+        l.quizScore = l.quizScore || 85
+      } else if (idx === completedCount) {
+        l.status = 'active'
+        l.quizScore = null
+      } else {
+        l.status = 'locked'
+        l.quizScore = null
+      }
+    })
+  }
+
+  function login(email, password) {
+    const user = usersDb.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password)
+    if (user) {
+      isLoggedIn.value = true
+      loggedUser.value = user
+      currentRole.value = user.role
+      if (user.role === 'student') {
+        syncStudentLessons(user)
+      }
+      return { success: true, role: user.role }
+    }
+    return { success: false, message: 'Invalid email or password' }
+  }
+
+  function logout() {
+    isLoggedIn.value = false
+    loggedUser.value = null
+    currentRole.value = null
+  }
+
   return {
-    activeRole, currentUser,
+    activeRole, currentUser, isLoggedIn, currentRole, usersDb,
     lessons, completedDays, progressPercent, avgScore,
     updateLesson,
     students, submissions,
     approveSubmission, requestRevision, getQuizForDay,
+    login, logout,
   }
 })
