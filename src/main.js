@@ -7,6 +7,7 @@ import './style.css'
 // ── Routes ───────────────────────────────────────────────────────────────────
 import LandingPage from './pages/LandingPage.vue'
 import LoginPage from './pages/LoginPage.vue'
+import RegisterPage from './pages/RegisterPage.vue'
 import Dashboard from './pages/Dashboard.vue'
 import LessonView from './pages/LessonView.vue'
 import MentorPanel from './pages/MentorPanel.vue'
@@ -19,6 +20,7 @@ const router = createRouter({
   routes: [
     { path: '/', component: LandingPage },
     { path: '/login', component: LoginPage },
+    { path: '/register', component: RegisterPage },
     { path: '/dashboard', component: Dashboard },
     { path: '/lesson/:day', component: LessonView, props: true },
     { path: '/mentor', component: MentorPanel },
@@ -38,7 +40,7 @@ app.use(router)
 
 router.beforeEach((to, from, next) => {
   const store = useCircuitronStore()
-  const publicPages = ['/', '/login']
+  const publicPages = ['/', '/login', '/register']
   const authRequired = !publicPages.includes(to.path)
 
   if (authRequired && !store.isLoggedIn) {

@@ -92,33 +92,71 @@
       </div>
     </section>
 
-    <!-- Curriculum Timeline -->
+    
+    <!-- 14-Day Learning Roadmap -->
     <section id="curriculum" class="section" style="background:#000000;">
       <div class="container-sm">
         <div style="text-align:center;margin-bottom:48px;">
-          <h2 class="section-title" style="color:white;">The 14-Day Syllabus</h2>
-          <p class="section-subtitle" style="margin:0 auto; color:#9ca3af;">Project-focused lessons designed to build real skills, one day at a time.</p>
+          <h2 class="section-title" style="color:white; font-size:36px; font-weight:800;">14-Day Learning Roadmap</h2>
+          <p class="section-subtitle" style="margin:0 auto; color:#9ca3af; font-size:16px;">From Arduino Fundamentals to ESP32 IoT Projects</p>
         </div>
+
+        <!-- Badges -->
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:48px;">
+          <span v-for="badge in curriculumBadges" :key="badge" class="badge" style="background:rgba(255,255,255,0.05); color:#ffffff; border:1px solid rgba(255,255,255,0.2); padding:6px 12px; font-size:13px; font-weight:600;">
+            {{ badge }}
+          </span>
+        </div>
+
+        <!-- Progress Path -->
+        <div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:8px; margin-bottom:48px; background:rgba(255,255,255,0.03); border-radius:12px; padding:16px; border:1px solid rgba(255,255,255,0.05);">
+          <template v-for="(step, index) in progressPath" :key="step">
+            <span style="color:#d1d5db; font-size:13px; font-weight:700;">{{ step }}</span>
+            <span v-if="index < progressPath.length - 1" style="color:#4b5563; font-size:12px;">→</span>
+          </template>
+        </div>
+
+        <!-- Timeline -->
         <div style="position:relative;padding-left:40px;border-left:2px solid #374151;">
-          <div v-for="lesson in store.lessons" :key="lesson.day"
-            style="margin-bottom:32px;position:relative;">
-            <!-- dot -->
-            <div style="position:absolute;left:-49px;top:24px;width:16px;height:16px;border-radius:50%;background:#000000;border:2px solid #ffffff;display:flex;align-items:center;justify-content:center; box-shadow: 0 0 10px rgba(255,255,255,0.4);">
-              <div style="width:6px;height:6px;border-radius:50%;background:#ffffff;"></div>
-            </div>
-            
-            <div class="glass-card" style="padding:24px;">
-              <!-- day label -->
-              <span class="badge" style="margin-bottom:12px;font-size:11px; background:rgba(255,255,255,0.1); color:#ffffff; border:1px solid rgba(255,255,255,0.2);">Day {{ lesson.day }}</span>
-              <h3 style="font-size:18px;margin-bottom:8px; color:white; letter-spacing:-0.02em;">{{ lesson.title }}</h3>
-              <p style="font-size:14px;color:#9ca3af;line-height:1.7;">{{ lesson.summary }}</p>
-              <div class="tag-strip" style="margin-top:16px;">
-                <span v-for="tag in lesson.tags" :key="tag" class="tag glass-tag">{{ tag }}</span>
-              </div>
+          
+          <template v-for="week in curriculumWeeks" :key="week.week">
+            <!-- Week Header -->
+            <div style="margin-bottom:32px; position:relative;">
+              <div style="position:absolute;left:-48px;top:4px;width:14px;height:14px;border-radius:50%;background:#ffffff; box-shadow: 0 0 15px rgba(255,255,255,0.6);"></div>
+              <h3 style="font-size:20px; font-weight:800; color:white; letter-spacing:-0.02em; margin-bottom:8px;">{{ week.week }}</h3>
+              <p style="font-size:14px; color:#9ca3af; line-height:1.6; font-style:italic;">Goal: {{ week.goal }}</p>
             </div>
 
-          </div>
+            <!-- Days -->
+            <div v-for="day in week.days" :key="day.day" style="margin-bottom:24px; position:relative;">
+              <!-- dot -->
+              <div style="position:absolute;left:-45px;top:20px;width:8px;height:8px;border-radius:50%;background:#a3a3a3;border:2px solid #000000;"></div>
+              
+              <!-- Expandable Card -->
+              <div class="faq-item glass-card" :class="{ 'active-faq': activeDay === day.day }" style="padding:0; overflow:hidden;">
+                <button @click="activeDay = activeDay === day.day ? null : day.day" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 20px;text-align:left;cursor:pointer;border:none;background:transparent; outline:none;">
+                  <div style="display:flex; align-items:center; gap:12px;">
+                    <span class="badge" style="background:rgba(255,255,255,0.1); color:#ffffff; border:1px solid rgba(255,255,255,0.2); font-size:11px;">Day {{ day.day }}</span>
+                    <span style="font-size:15px; font-weight:600; color:white;">{{ day.title }}</span>
+                  </div>
+                  <span style="font-size:20px;color:#ffffff;transition:transform 0.3s;" :style="activeDay === day.day ? 'transform:rotate(45deg)' : ''">+</span>
+                </button>
+                <div v-show="activeDay === day.day" style="padding:0 20px 16px; font-size:14px; color:#9ca3af; line-height:1.7; border-top:1px solid rgba(255,255,255,0.05); background:rgba(0,0,0,0.2); margin-top:4px;">
+                  {{ day.text }}
+                </div>
+              </div>
+            </div>
+          </template>
+
         </div>
+
+        <!-- CTA -->
+        <div style="text-align:center; margin-top:64px; padding:40px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:16px;">
+          <h3 style="font-size:24px; font-weight:800; color:white; margin-bottom:12px;">Ready to Build Real Embedded Systems?</h3>
+          <p style="font-size:15px; color:#9ca3af; margin-bottom:24px; max-width:400px; margin-left:auto; margin-right:auto;">Join Circuitron and learn through simulations, tasks, quizzes, and hands-on projects.</p>
+          <router-link to="/login" class="btn btn-primary btn-lg" style="background:#ffffff; color:#000000; border:none; font-weight:800; font-size:14px; padding:12px 32px;">Start Learning Now ↗</router-link>
+        </div>
+
       </div>
     </section>
 
@@ -187,6 +225,42 @@ import Navbar from '../components/Navbar.vue'
 
 const store = useCircuitronStore()
 const active = ref(null)
+
+const activeDay = ref(1)
+
+const curriculumBadges = ['Arduino', 'ESP32', 'IoT', 'TinkerCAD', 'Wokwi', 'Blynk', 'AI Assisted Learning']
+
+const progressPath = ['Foundation', 'Sensors', 'Automation', 'Arduino Project', 'ESP32', 'IoT', 'Smart Systems', 'Final Project']
+
+const curriculumWeeks = [
+  {
+    week: 'WEEK 1 — Arduino & Embedded Systems',
+    goal: 'Build strong foundations in Arduino programming, electronics, sensor interfacing, automation logic, and embedded systems workflows.',
+    days: [
+      { day: 1, title: 'Basics & Simulation', text: 'Introduction to Arduino, Arduino ecosystem, basic electronics, setup(), loop(), TinkerCAD simulation, LED blinking.' },
+      { day: 2, title: 'Digital Logic', text: 'Digital input/output, push buttons, serial monitor, logic building, button-controlled systems.' },
+      { day: 3, title: 'Sensors & Actuators', text: 'Sensors & actuators, ultrasonic sensor, LDR, IR sensor, buzzers, servo motors.' },
+      { day: 4, title: 'Analog & Automation', text: 'PWM, analog signals, servo automation, motor concepts, automation workflows.' },
+      { day: 5, title: 'System Integration', text: 'System integration, combining sensors and outputs, debugging basics, AI-assisted coding workflow.' },
+      { day: 6, title: 'Mini Project', text: 'Arduino mini project implementation using Week 1 concepts.' },
+      { day: 7, title: 'Submission', text: 'Project completion, debugging, documentation, and final submission.' }
+    ]
+  },
+  {
+    week: 'WEEK 2 — ESP32 & IoT Systems',
+    goal: 'Introduce ESP32, cloud connectivity, IoT workflows, smart automation systems, and mobile-based control systems.',
+    days: [
+      { day: 8, title: 'ESP32 Architecture', text: 'Introduction to ESP32, architecture, GPIO, WiFi and Bluetooth basics, Wokwi setup.' },
+      { day: 9, title: 'IoT & Cloud Connect', text: 'IoT fundamentals, smart communication systems, cloud connectivity, Blynk introduction.' },
+      { day: 10, title: 'Smart Sensors', text: 'ESP32 sensor integration, real-time monitoring, smart sensor systems.' },
+      { day: 11, title: 'Blynk Dashboards', text: 'Blynk dashboard setup, mobile app control, remote automation systems.' },
+      { day: 12, title: 'Advanced IoT', text: 'Advanced IoT workflows, multi-device automation, smart home simulation.' },
+      { day: 13, title: 'IoT Capstone', text: 'Final IoT-based mini project implementation using ESP32 and Blynk.' },
+      { day: 14, title: 'Final Submission', text: 'Final project completion, testing, debugging, optimization, and submission.' }
+    ]
+  }
+]
+
 
 const stats = [
   { value: '14', label: 'Day Program' },
