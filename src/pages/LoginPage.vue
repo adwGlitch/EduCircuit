@@ -56,21 +56,8 @@
           </button>
         </form>
 
-        <!-- Quick Access for Staff -->
-        <div style="margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--slate-200);">
-          <div style="font-size: 11px; font-weight: 700; color: var(--slate-400); text-transform: uppercase; letter-spacing: 0.08em; text-align: center; margin-bottom: 12px;">Staff Quick Access</div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-            <button @click="quickLogin('mentor')" class="btn btn-ghost btn-sm" style="justify-content: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 10px; border: 1.5px solid var(--slate-200); border-radius: var(--radius);">
-              <span>👩‍🏫</span> Mentor Login
-            </button>
-            <button @click="quickLogin('admin')" class="btn btn-ghost btn-sm" style="justify-content: center; gap: 6px; font-size: 13px; font-weight: 700; padding: 10px; border: 1.5px solid var(--slate-200); border-radius: var(--radius);">
-              <span>🛠️</span> Admin Login
-            </button>
-          </div>
-        </div>
-
         <!-- Sign Up Link -->
-        <div style="margin-top: 20px; text-align: center; font-size: 14px; color: var(--slate-600);">
+        <div style="margin-top: 24px; text-align: center; font-size: 14px; color: var(--slate-600);">
           Don't have an account? 
           <router-link to="/register" style="color: var(--slate-900); font-weight: 700; text-decoration: none; border-bottom: 1px solid var(--slate-300);">Sign Up</router-link>
         </div>
@@ -93,20 +80,6 @@ const email = ref('')
 const password = ref('')
 const error = ref('')
 const loading = ref(false)
-
-// Predefined staff credentials
-const STAFF = {
-  mentor: { email: 'mentor@circuitron.io', password: 'mentor123' },
-  admin:  { email: 'admin@circuitron.io',  password: 'admin123'  },
-}
-
-function quickLogin(role) {
-  email.value    = STAFF[role].email
-  password.value = STAFF[role].password
-  error.value    = ''
-  // Auto-submit immediately
-  handleLogin()
-}
 
 function handleLogin() {
   error.value = ''
